@@ -229,7 +229,7 @@ describe('express-winston', function () {
       });
     });
 
-    describe.only('exceptionToMeta option', function () {
+    describe('exceptionToMeta option', function () {
       it('should, use exceptionToMeta function when given', function () {
         function exceptionToMeta(error) {
           return {
@@ -252,6 +252,20 @@ describe('express-winston', function () {
           result.log.meta.should.have.property('os');
           result.log.meta.should.have.property('trace');
           result.log.meta.should.have.property('stack');
+        });
+      });
+    });
+
+    describe('blacklistedMetaFields option', function () {
+      it('should, remove given fields from the meta result', function () {
+        var testHelperOptionsWithBlacklist = { loggerOptions: { blacklistedMetaFields: ['trace'] } };
+        return errorLoggerTestHelper(testHelperOptionsWithBlacklist).then(function (result) {
+          result.log.meta.should.not.have.property('trace');
+        });
+
+        var testHelperOptionsWithoutBlacklist = { loggerOptions: {} };
+        return errorLoggerTestHelper(testHelperOptionsWithoutBlacklist).then(function (result) {
+          result.log.meta.should.have.property('trace');
         });
       });
     });
